@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>SEM 1 OS — Personal Command Center</title>
+<meta name="description" content="Personal productivity operating system: schedule, tasks, focus mode, goals and analytics in one command center.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============ Sidebar (desktop) ============ -->
+  <aside class="sidebar" aria-label="Điều hướng chính">
+    <div class="brand">SEM<span>1</span><em>OS</em></div>
+    <nav class="nav" role="navigation" aria-label="Views">
+      <button class="nav-btn is-active" data-view="home" aria-current="page">
+        <svg viewBox="0 0 24 24"><path d="M3.5 11.5L12 4l8.5 7.5M5.5 10v9.5h4.5V14h4v5.5h4.5V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Hôm nay</span>
+      </button>
+      <button class="nav-btn" data-view="schedule">
+        <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 9.5h17M8 3.2v3.6M16 3.2v3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Lịch trình</span>
+      </button>
+      <button class="nav-btn" data-view="tasks">
+        <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 12l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Tasks</span>
+      </button>
+      <button class="nav-btn" data-view="focus">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="13.2" r="7.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 13.2V8.8M9.6 3.6h4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Focus</span>
+      </button>
+      <button class="nav-btn" data-view="goals">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>
+        <span>Mục tiêu</span>
+      </button>
+      <button class="nav-btn" data-view="stats">
+        <svg viewBox="0 0 24 24"><path d="M4.5 20V11M12 20V4.5M19.5 20v8.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Thống kê</span>
+      </button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="cmd-trigger" id="openCmdBtn">
+        <span>Tìm lệnh</span>
+        <kbd>Ctrl K</kbd>
+      </button>
+      <div class="foot-meta" id="levelBlock">
+        <div class="level-row"><span id="levelLabel">Lv 1</span><span class="muted" id="xpLabel">0 XP</span></div>
+        <div class="bar thin"><i id="xpBar" style="width:0%"></i></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ Main ============ -->
+  <main class="main">
+
+    <header class="topbar">
+      <div>
+        <div class="eyebrow" id="greeting">Chào bạn</div>
+        <h1 id="pageTitle">Hôm nay</h1>
+        <p class="sub" id="dateText">—</p>
+      </div>
+      <div class="clock-block">
+        <span class="clock" id="clock">--:--:--</span>
+        <span class="muted small" id="weekText">Tuần —</span>
+      </div>
+    </header>
+
+    <!-- ===== HOME ===== -->
+    <section id="view-home" class="view is-active">
+      <div class="bento">
+
+        <div class="card hero-now" id="heroNow">
+          <div class="hero-top">
+            <span class="eyebrow" id="heroEyebrow">NOW</span>
+            <span class="tag" id="heroTag"></span>
+          </div>
+          <h2 id="heroTitle">—</h2>
+          <p class="muted" id="heroDesc">—</p>
+          <div class="hero-timer" id="heroTimer">--:--</div>
+          <div class="actions">
+            <button class="btn btn-primary" id="heroStartBtn">Bắt đầu Focus</button>
+            <button class="btn btn-ghost" id="heroDoneBtn">Đánh dấu xong</button>
+          </div>
+        </div>
+
+        <div class="card next-action" id="nextActionCard">
+          <div class="card-head"><h3>Next Action</h3></div>
+          <p class="next-lead" id="nextActionLead">—</p>
+          <p class="muted small" id="nextActionSub">—</p>
+        </div>
+
+        <div class="card progress-card">
+          <div class="card-head"><h3>Tiến độ hôm nay</h3><span class="muted small" id="todayPct">0%</span></div>
+          <div class="bar"><i id="todayBar" style="width:0%"></i></div>
+          <div class="stat-grid">
+            <div class="stat"><b id="doneCount">0</b><span>hoàn thành</span></div>
+            <div class="stat"><b id="totalCount">0</b><span>buổi hôm nay</span></div>
+            <div class="stat"><b id="focusTotal">0m</b><span>tổng focus</span></div>
+            <div class="stat"><b id="streakCount">0</b><span>ngày streak</span></div>
+          </div>
+        </div>
+
+        <div class="card timeline-card span-2">
+          <div class="card-head"><h3>Timeline hôm nay</h3><span class="muted small">Bấm để đánh dấu hoàn thành</span></div>
+          <div id="homeTimeline"></div>
+        </div>
+
+        <div class="card week-card">
+          <div class="card-head"><h3>Tuần này</h3></div>
+          <div class="day-strip" id="homeWeekStrip"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== SCHEDULE ===== -->
+    <section id="view-schedule" class="view">
+      <div class="card">
+        <div class="card-head"><h3>Lịch trình đầy đủ</h3><span class="muted small">Chọn một ngày</span></div>
+        <div class="day-strip" id="scheduleWeekStrip"></div>
+        <div style="height:14px"></div>
+        <div id="scheduleTimeline"></div>
+      </div>
+    </section>
+
+    <!-- ===== TASKS ===== -->
+    <section id="view-tasks" class="view">
+      <div class="bento tasks-layout">
+        <div class="card span-2">
+          <div class="card-head tabs-head">
+            <div class="tabs" id="taskTabs">
+              <button class="tab is-active" data-filter="today">Hôm nay</button>
+              <button class="tab" data-filter="upcoming">Sắp tới</button>
+              <button class="tab" data-filter="completed">Hoàn thành</button>
+              <button class="tab" data-filter="all">Tất cả</button>
+            </div>
+            <select id="taskSort" class="select">
+              <option value="priority">Ưu tiên</option>
+              <option value="deadline">Hạn chót</option>
+              <option value="created">Mới tạo</option>
+            </select>
+          </div>
+          <div class="counts" id="taskCounts"></div>
+          <div id="taskList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Thêm task mới</h3></div>
+          <form id="taskForm" class="task-form">
+            <label>Tên công việc
+              <input type="text" id="taskTitle" placeholder="Ví dụ: Ôn subnetting cho buổi Mạng máy tính" required>
+            </label>
+            <div class="form-row">
+              <label>Danh mục
+                <select id="taskCategory">
+                  <option value="study">Học tập</option>
+                  <option value="ielts">IELTS</option>
+                  <option value="school">Lớp học</option>
+                  <option value="project">Project</option>
+                  <option value="other">Khác</option>
+                </select>
+              </label>
+              <label>Ưu tiên
+                <select id="taskPriority">
+                  <option value="high">Cao</option>
+                  <option value="medium" selected>Trung bình</option>
+                  <option value="low">Thấp</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-row">
+              <label>Hạn chót
+                <input type="date" id="taskDeadline">
+              </label>
+              <label>Thời gian dự kiến (phút)
+                <input type="number" id="taskEst" min="5" step="5" value="30">
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">+ Thêm task</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOCUS ===== -->
+    <section id="view-focus" class="view">
+      <div class="card focus-card">
+        <span class="eyebrow">DEEP WORK</span>
+        <h2 id="focusLabel">Focus Session</h2>
+        <p class="muted small" id="focusSub">Chọn một khoảng thời gian và bắt đầu tập trung.</p>
+        <div class="focus-ring-wrap">
+          <svg class="focus-ring" viewBox="0 0 200 200" width="220" height="220">
+            <circle cx="100" cy="100" r="88" class="ring-track"/>
+            <circle cx="100" cy="100" r="88" class="ring-progress" id="focusRingProgress"/>
+          </svg>
+          <div class="focus-timer" id="focusTimer">50:00</div>
+        </div>
+        <div class="presets" id="focusPresets">
+          <button class="chip" data-min="25">25 phút</button>
+          <button class="chip is-active" data-min="50">50 phút</button>
+          <button class="chip" data-min="90">90 phút</button>
+          <button class="chip" data-min="custom">Tuỳ chỉnh</button>
+        </div>
+        <div class="actions" style="justify-content:center">
+          <button class="btn btn-primary" id="focusStartBtn">Bắt đầu</button>
+          <button class="btn btn-ghost" id="focusPauseBtn">Tạm dừng</button>
+          <button class="btn btn-ghost" id="focusFinishBtn">Kết thúc</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Lịch sử focus</h3></div>
+        <div id="focusHistory"></div>
+      </div>
+    </section>
+
+    <!-- ===== GOALS ===== -->
+    <section id="view-goals" class="view">
+      <div class="card-head page-card-head"><h3>Mục tiêu học kỳ</h3><span class="muted small">Cập nhật tiến độ bất cứ lúc nào</span></div>
+      <div class="bento goals-grid" id="goalsGrid"></div>
+    </section>
+
+    <!-- ===== STATS ===== -->
+    <section id="view-stats" class="view">
+      <div class="bento">
+        <div class="card span-2">
+          <div class="card-head"><h3>Tổng quan 7 ngày</h3></div>
+          <div class="weekly-grid" id="statsSummary"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Phân bổ theo danh mục</h3><span class="muted small">Theo lịch cố định</span></div>
+          <div id="statsCategory"></div>
+        </div>
+        <div class="card span-3">
+          <div class="card-head"><h3>Mức độ hoạt động (35 ngày)</h3></div>
+          <div id="statsHeatmap"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ Mobile bottom nav ============ -->
+<nav class="bottom-nav" aria-label="Điều hướng di động">
+  <button class="bn-btn is-active" data-view="home"><svg viewBox="0 0 24 24"><path d="M3.5 11.5L12 4l8.5 7.5M5.5 10v9.5h4.5V14h4v5.5h4.5V10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Hôm nay</span></button>
+  <button class="bn-btn" data-view="tasks"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.5 12l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Tasks</span></button>
+  <button class="bn-btn" data-view="focus"><svg viewBox="0 0 24 24"><circle cx="12" cy="13.2" r="7.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 13.2V8.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span>Focus</span></button>
+  <button class="bn-btn" data-view="goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Mục tiêu</span></button>
+  <button class="bn-btn" data-view="stats"><svg viewBox="0 0 24 24"><path d="M4.5 20V11M12 20V4.5M19.5 20v8.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg><span>Thống kê</span></button>
+</nav>
+
+<!-- ============ Command palette ============ -->
+<div class="cmd-overlay" id="cmdOverlay">
+  <div class="cmd-box" role="dialog" aria-modal="true" aria-label="Command palette">
+    <input type="text" id="cmdInput" class="cmd-input" placeholder="Gõ lệnh… (vd: focus, task, schedule)" autocomplete="off">
+    <ul class="cmd-list" id="cmdList"></ul>
+    <div class="cmd-hint">
+      <span><kbd>↑</kbd><kbd>↓</kbd> di chuyển</span>
+      <span><kbd>Enter</kbd> chọn</span>
+      <span><kbd>Esc</kbd> đóng</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Toast ============ -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/state.js"></script>
+<script src="js/schedule.js"></script>
+<script src="js/tasks.js"></script>
+<script src="js/focus.js"></script>
+<script src="js/goals.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/command.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
